@@ -1,8 +1,8 @@
-import { Faker, en_US, de } from "@faker-js/faker";
+import { Faker, en, de } from "@faker-js/faker";
 import seedrandom from "seedrandom";
 
-const locals = {
-  en: en_US,
+const locales = {
+  en: en,
   de: de,
 };
 
@@ -11,30 +11,29 @@ export const generateSongs = (
   page,
   region,
   averageLikes,
-  pageSize,
+  pageSize = 20,
 ) => {
-  const localData = locals[region] || locals.en;
-  const fakerInstance = new Faker({ locale: [localData, en_US] });
+  const localeData = locales[region] || locales.en;
+
+  const fakerInstance = new Faker({ locale: [localeData, en] });
+
   const combinedSeedString = `${seedString}-page-${page}`;
+
   const rng = seedrandom(combinedSeedString);
 
-  // int
   const numericSeed = Math.floor(rng() * 1000000000);
   fakerInstance.seed(numericSeed);
 
   const songs = [];
-
   const startIndex = (page - 1) * pageSize + 1;
 
   for (let i = 0; i < pageSize; i++) {
     const currentIndex = startIndex + i;
 
-    // like %
     const baseLikes = Math.floor(averageLikes);
     const fractionalPart = averageLikes - baseLikes;
-
-    const extraLike = rng < fractionalPart ? 1 : 0;
-    const finalLike = baseLikes + extraLike;
+    const extraLike = rng() < fractionalPart ? 1 : 0;
+    const finalLikes = baseLikes + extraLike;
 
     // artist name
     const isBand = fakerInstance.number.int({ min: 1, max: 2 }) === 1;
@@ -50,6 +49,7 @@ export const generateSongs = (
           .words({ count: { min: 1, max: 3 } })
           .replace(/\b\w/g, (l) => l.toUpperCase());
 
+    // song title
     const songTitle = fakerInstance.word
       .words({ count: { min: 2, max: 4 } })
       .replace(/\b\w/g, (l) => l.toUpperCase());
@@ -60,7 +60,7 @@ export const generateSongs = (
       artist: artistName,
       album: albumName,
       genre: fakerInstance.music.genre(),
-      likes: finalLike,
+      likes: finalLikes,
     });
   }
 

@@ -9,13 +9,12 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
-app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use("/api", songRoutes);
 
 app.get("/", (req, res) => {
-  res.send({ success: true, message: "Songpuff server is running..." });
+  res.send({ success: 200, message: "Songpuff server is running..." });
 });
 
 app.listen(PORT, () => {
