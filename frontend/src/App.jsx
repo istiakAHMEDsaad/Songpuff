@@ -1,6 +1,8 @@
+import { Button } from "@/components/ui/button";
+
 function App() {
   return (
-    <div>App</div>
+    <div><Button>App</Button></div>
   )
 }
 
