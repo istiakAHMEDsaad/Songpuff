@@ -1,0 +1,11 @@
+<div className="bg-white rounded-xl border shadow-sm min-h-[500px] p-4">
+          {/* {viewMode === 'table' ? (
+            <SongTable region={region} seed={seed} likes={likes} />
+          ) : (
+            <SongGallery region={region} seed={seed} likes={likes} />
+          )} */}
+
+          <div className="flex items-center justify-center h-[400px] text-slate-400">
+            Table/Gallery mode
+          </div>
+        </div>

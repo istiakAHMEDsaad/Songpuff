@@ -1,0 +1,193 @@
+import React from "react";
+import { useState, useEffect } from "react";
+import { useGetSongs } from "../hooks/useSongs";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { ChevronDown, ChevronUp, Play, Disc3, Heart } from "lucide-react";
+
+export default function SongTable({ region, seed, likes }) {
+  const [page, setPage] = useState(1);
+  const [expandedRow, setExpandedRow] = useState(null);
+
+  const { data, isLoading, isFetching } = useGetSongs(
+    { region, seed, likes },
+    page,
+  );
+  const songs = data?.data || [];
+
+  useEffect(() => {
+    setPage(1);
+    setExpandedRow(null);
+  }, [region, seed, likes]);
+
+  const handleNextPage = () => setPage((prev) => prev + 1);
+  const handlePrevPage = () => setPage((prev) => Math.max(prev - 1, 1));
+
+  const toggleRow = (index) => {
+    setExpandedRow(expandedRow === index ? null : index);
+  };
+
+  return (
+    <div className="flex flex-col h-full">
+      <div className="rounded-md border flex-1 overflow-hidden">
+        <Table>
+          <TableHeader className="bg-slate-50">
+            <TableRow>
+              <TableHead className="w-[80px] text-center">#</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead>Artist</TableHead>
+              <TableHead>Album</TableHead>
+              <TableHead>Genre</TableHead>
+              <TableHead className="text-right">Likes</TableHead>
+              <TableHead className="w-[50px]"></TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {isLoading && page === 1 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={7}
+                  className="h-64 text-center text-slate-500"
+                >
+                  <Disc3 className="mx-auto h-8 w-8 animate-spin text-slate-300 mb-2" />
+                </TableCell>
+              </TableRow>
+            ) : songs.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={7}
+                  className="h-64 text-center text-slate-500"
+                >
+                  No data found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              songs.map((song) => (
+                <React.Fragment key={song.index}>
+                  <TableRow
+                    className={`cursor-pointer transition-colors ${expandedRow === song.index ? "bg-blue-100 hover:bg-blue-100" : "hover:bg-blue-50"}`}
+                    onClick={() => toggleRow(song.index)}
+                  >
+                    <TableHead className="text-center font-medium text-slate-900">
+                      {song.index}
+                    </TableHead>
+                    <TableHead className="font-semibold text-slate-900">
+                      {song.title}
+                    </TableHead>
+                    <TableHead>{song.artist}</TableHead>
+                    <TableHead
+                      className={`${song.album === "Single" ? "text-slate-500" : "text-slate-900"}`}
+                    >
+                      {song.album}
+                    </TableHead>
+                    <TableHead>
+                      <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-800">
+                        {song.genre}
+                      </span>
+                    </TableHead>
+                    <TableHead className="text-right font-medium">
+                      <div className="flex items-center justify-end gap-1">
+                        {song.likes}{" "}
+                        <Heart className="w-4 h-4 text-rose-500 fill-rose-100" />
+                      </div>
+                    </TableHead>
+                    <TableCell>
+                      {expandedRow === song.index ? (
+                        <ChevronUp className="h-5 w-5 text-slate-400" />
+                      ) : (
+                        <ChevronDown className="h-5 w-5 text-slate-400" />
+                      )}
+                    </TableCell>
+                  </TableRow>
+
+                  {/* song details */}
+                  {expandedRow === song.index && (
+                    <TableRow className="bg-slate-50 hover:bg-slate-50">
+                      <TableCell colSpan={7} className="p-0">
+                        <div className="p-6 border-b animate-in fade-in slide-in-from-top-2 duration-200">
+                          <div className="flex flex-col md:flex-row gap-6 items-start">
+                            {/* ===================== dynamic later ===================== */}
+                            <div className="w-40 h-40 shrink-0 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg flex items-center justify-center p-4 text-center">
+                              <span className="text-white font-bold drop-shadow-md leading-tight">
+                                {song.title} <br />
+                                <span className="text-sm font-normal opacity-80">
+                                  {song.artist}
+                                </span>
+                              </span>
+                            </div>
+
+                            <div className="flex-1 space-y-4">
+                              <div>
+                                <h4 className="text-lg font-bold text-slate-900">
+                                  {song.title}
+                                </h4>
+                                <p className="text-slate-500">
+                                  By {song.artist} • {song.album}
+                                </p>
+                              </div>
+
+                              <p className="text-sm text-slate-600 italic border-l-2 border-slate-300 pl-3">
+                                "An absolute masterpiece. The transition in the
+                                second act is truly breathtaking."
+                                <br />- Fake Rolling Stone Review
+                              </p>
+
+                              {/* ===================== later ===================== */}
+                              <Button className="gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6">
+                                <Play className="w-4 h-4 fill-current" />
+                                Play Preview
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </React.Fragment>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* pagination */}
+      <div className="flex items-center justify-between m-4">
+        <div className="text-sm text-slate-500">
+          Showing page{" "}
+          <span className="font-semibold text-slate-900">{page}</span>
+          {isFetching && (
+            <span className="ml-2 text-blue-500 animate-pulse">
+              Updating...
+            </span>
+          )}
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={handlePrevPage}
+            disabled={page === 1 || isLoading}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={handleNextPage}
+            disabled={isLoading || songs.length < 20}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
