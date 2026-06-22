@@ -1,6 +1,3 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import { useGetSongs } from "../hooks/useSongs";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -10,11 +7,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ChevronDown, ChevronUp, Play, Disc3, Heart } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Disc3,
+  Heart,
+  Play,
+  Square,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useGetSongs } from "../hooks/useSongs";
+import { playProceduralSong, stopMusic } from "../lib/musicEngine";
+import CoverArt from "./CoverArt";
 
 export default function SongTable({ region, seed, likes }) {
   const [page, setPage] = useState(1);
   const [expandedRow, setExpandedRow] = useState(null);
+  const [playingSongIndex, setPlayingSongIndex] = useState(null);
 
   const { data, isLoading, isFetching } = useGetSongs(
     { region, seed, likes },
@@ -26,6 +35,17 @@ export default function SongTable({ region, seed, likes }) {
     setPage(1);
     setExpandedRow(null);
   }, [region, seed, likes]);
+
+  const handlePlayAudio = async (song) => {
+    if (playingSongIndex === song.index) {
+      stopMusic();
+      setPlayingSongIndex(null);
+    } else {
+      setPlayingSongIndex(song.index);
+      await playProceduralSong(seed, song);
+      setTimeout(() => setPlayingSongIndex(null), 8000);
+    }
+  };
 
   const handleNextPage = () => setPage((prev) => prev + 1);
   const handlePrevPage = () => setPage((prev) => Math.max(prev - 1, 1));
@@ -114,14 +134,9 @@ export default function SongTable({ region, seed, likes }) {
                       <TableCell colSpan={7} className="p-0">
                         <div className="p-6 border-b animate-in fade-in slide-in-from-top-2 duration-200">
                           <div className="flex flex-col md:flex-row gap-6 items-start">
-                            {/* ===================== dynamic later ===================== */}
-                            <div className="w-40 h-40 shrink-0 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg flex items-center justify-center p-4 text-center">
-                              <span className="text-white font-bold drop-shadow-md leading-tight">
-                                {song.title} <br />
-                                <span className="text-sm font-normal opacity-80">
-                                  {song.artist}
-                                </span>
-                              </span>
+                            {/* art */}
+                            <div className="w-40 h-40 shrink-0 rounded-xl overflow-hidden shadow-lg border border-slate-200">
+                              <CoverArt song={song} seed={seed} />
                             </div>
 
                             <div className="flex-1 space-y-4">
@@ -140,10 +155,22 @@ export default function SongTable({ region, seed, likes }) {
                                 <br />- Fake Rolling Stone Review
                               </p>
 
-                              {/* ===================== later ===================== */}
-                              <Button className="gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6">
-                                <Play className="w-4 h-4 fill-current" />
-                                Play Preview
+                              {/* play song */}
+                              <Button
+                                onClick={() => handlePlayAudio(song)}
+                                className={`gap-2 text-white rounded-full px-6 transition-all ${playingSongIndex === song.index ? "bg-rose-500 hover:bg-rose-600" : "bg-blue-600 hover:bg-blue-700"}`}
+                              >
+                                {playingSongIndex === song.index ? (
+                                  <>
+                                    <Square className="w-4 h-4 fill-current" />
+                                    Stop Preview
+                                  </>
+                                ) : (
+                                  <>
+                                    <Play className="w-4 h-4 fill-current" />
+                                    Play Preview
+                                  </>
+                                )}
                               </Button>
                             </div>
                           </div>

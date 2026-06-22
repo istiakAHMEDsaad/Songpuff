@@ -1,8 +1,8 @@
 import { GalleryVertical, Table } from "lucide-react";
 import { useState } from "react";
-import Toolbar from "./components/Toolbar";
+import SongGallery from "./components/SongGallery";
 import SongTable from "./components/SongTable";
-// import SongGallery from './components/SongGallery';
+import Toolbar from "./components/Toolbar";
 
 function App() {
   const [region, setRegion] = useState("en");
@@ -61,9 +61,7 @@ function App() {
           {viewMode === "table" ? (
             <SongTable region={region} seed={seed} likes={likes} />
           ) : (
-            <div className="flex items-center justify-center h-[400px] text-slate-400">
-              Gallery View (Infinite Scroll) coming next...
-            </div>
+            <SongGallery region={region} seed={seed} likes={likes} />
           )}
         </div>
       </main>
