@@ -149,29 +149,61 @@ export default function SongTable({ region, seed, likes }) {
                                 </p>
                               </div>
 
-                              <p className="text-sm text-slate-600 italic border-l-2 border-slate-300 pl-3">
-                                "An absolute masterpiece. The transition in the
-                                second act is truly breathtaking."
-                                <br />- Fake Rolling Stone Review
-                              </p>
-
                               {/* play song */}
-                              <Button
-                                onClick={() => handlePlayAudio(song)}
-                                className={`gap-2 text-white rounded-full px-6 transition-all ${playingSongIndex === song.index ? "bg-rose-500 hover:bg-rose-600" : "bg-blue-600 hover:bg-blue-700"}`}
-                              >
-                                {playingSongIndex === song.index ? (
-                                  <>
-                                    <Square className="w-4 h-4 fill-current" />
-                                    Stop Preview
-                                  </>
-                                ) : (
-                                  <>
-                                    <Play className="w-4 h-4 fill-current" />
-                                    Play Preview
-                                  </>
-                                )}
-                              </Button>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  onClick={() => handlePlayAudio(song)}
+                                  className={`gap-2 text-white rounded-full px-6 transition-all ${playingSongIndex === song.index ? "bg-rose-500 hover:bg-rose-600" : "bg-blue-600 hover:bg-blue-700"}`}
+                                >
+                                  {playingSongIndex === song.index ? (
+                                    <>
+                                      <Square className="w-4 h-4 fill-current" />
+                                      Stop Preview
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Play className="w-4 h-4 fill-current" />
+                                      Play
+                                    </>
+                                  )}
+                                </Button>
+                                <span className="bg-slate-500 px-2.5 py-0.5 rounded-full text-slate-50">
+                                  {song.duration}
+                                </span>
+                              </div>
+
+                              {/* lyrics text */}
+                              <div className="mt-6 rounded-lg overflow-hidden w-full">
+                                <div className="bg-white px-4 py-2 border-b border-slate-200 mt-[-1px] ml-4">
+                                  <span className="font-semibold text-slate-700 text-sm">
+                                    Lyrics
+                                  </span>
+                                </div>
+
+                                <div className="p-6 bg-white space-y-4 relative">
+                                  {song.lyrics.map((line, idx) => {
+                                    const isPlaying =
+                                      playingSongIndex === song.index;
+                                    return (
+                                      <p
+                                        key={idx}
+                                        className={`italic transition-all duration-1000 transform ${
+                                          isPlaying
+                                            ? "text-slate-900 font-bold scale-105 drop-shadow-sm"
+                                            : "text-slate-400 font-medium scale-100"
+                                        }`}
+                                        style={{
+                                          transitionDelay: isPlaying
+                                            ? `${idx * 1.8}s`
+                                            : "0s",
+                                        }}
+                                      >
+                                        {line}
+                                      </p>
+                                    );
+                                  })}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -185,7 +217,7 @@ export default function SongTable({ region, seed, likes }) {
         </Table>
       </div>
 
-      {/* pagination */}
+      {/* bottom pagination */}
       <div className="flex items-center justify-between m-4">
         <div className="text-sm text-slate-500">
           Showing page{" "}

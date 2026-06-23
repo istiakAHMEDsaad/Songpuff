@@ -1,15 +1,20 @@
 import { GalleryVertical, Table } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SongGallery from "./components/SongGallery";
 import SongTable from "./components/SongTable";
 import Toolbar from "./components/Toolbar";
+import { setGlobalVolume } from "./lib/musicEngine";
 
 function App() {
   const [region, setRegion] = useState("en");
   const [seed, setSeed] = useState("69144534");
   const [likes, setLikes] = useState(0);
   const [viewMode, setViewMode] = useState("table");
-  console.log(viewMode);
+  const [volume, setVolume] = useState(10);
+
+  useEffect(() => {
+    setGlobalVolume(volume);
+  }, [volume]);
 
   return (
     <div className="min-h-screen bg-neutral-50/50 text-slate-900 font-sans pb-20">
@@ -55,6 +60,8 @@ function App() {
           setSeed={setSeed}
           likes={likes}
           setLikes={setLikes}
+          volume={volume}
+          setVolume={setVolume}
         />
 
         <div className="bg-white shadow-sm min-h-[500px]">

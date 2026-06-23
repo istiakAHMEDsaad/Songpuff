@@ -6,7 +6,6 @@ export const getSongs = (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const region = req.query.region || "en";
     const likes = parseFloat(req.query.likes) || 0;
-
     const songs = generateSongs(seed, page, region, likes);
 
     res.status(200).json({

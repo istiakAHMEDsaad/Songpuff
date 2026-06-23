@@ -14,22 +14,25 @@ export const generateSongs = (
   pageSize = 20,
 ) => {
   const localeData = locales[region] || locales.en;
-
   const fakerInstance = new Faker({ locale: [localeData, en] });
-
   const combinedSeedString = `${seedString}-page-${page}`;
-
   const rng = seedrandom(combinedSeedString);
 
   const numericSeed = Math.floor(rng() * 1000000000);
   fakerInstance.seed(numericSeed);
+
+  const minutes = fakerInstance.number.int({ min: 1, max: 4 });
+  const seconds = fakerInstance.number
+    .int({ min: 0, max: 59 })
+    .toString()
+    .padStart(2, "0");
+  const duration = `${minutes}:${seconds}`;
 
   const songs = [];
   const startIndex = (page - 1) * pageSize + 1;
 
   for (let i = 0; i < pageSize; i++) {
     const currentIndex = startIndex + i;
-
     const baseLikes = Math.floor(averageLikes);
     const fractionalPart = averageLikes - baseLikes;
     const extraLike = rng() < fractionalPart ? 1 : 0;
@@ -54,6 +57,13 @@ export const generateSongs = (
       .words({ count: { min: 2, max: 4 } })
       .replace(/\b\w/g, (l) => l.toUpperCase());
 
+    // lyrics
+    const lyrics = Array.from({ length: 4 }).map(() => {
+      return fakerInstance.lorem
+        .words({ min: 5, max: 8 })
+        .replace(/\b\w/g, (l) => l.toUpperCase());
+    });
+
     songs.push({
       index: currentIndex,
       title: songTitle,
@@ -61,6 +71,8 @@ export const generateSongs = (
       album: albumName,
       genre: fakerInstance.music.genre(),
       likes: finalLikes,
+      duration: duration,
+      lyrics: lyrics,
     });
   }
 

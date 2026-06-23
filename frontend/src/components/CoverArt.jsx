@@ -1,26 +1,23 @@
 import seedrandom from "seedrandom";
 
-// Retro, Cyberpunk, Pop Art, Vintage, Nature, Noir Contrast
 const PALETTES = [
-  ["#264653", "#2a9d8f", "#e9c46a", "#f4a261", "#e76f51"],
-  ["#f72585", "#b5179e", "#7209b7", "#480ca8", "#3f37c9"],
-  ["#ffbe0b", "#fb5607", "#ff006e", "#8338ec", "#3a86ff"],
-  ["#001219", "#005f73", "#0a9396", "#94d2bd", "#e9d8a6"],
-  ["#d8f3dc", "#b7e4c7", "#95d5b2", "#74c69d", "#52b788"],
-  ["#000000", "#14213d", "#fca311", "#e5e5e5", "#ffffff"],
+  ["#264653", "#2a9d8f", "#e9c46a", "#f4a261", "#e76f51"], // retro
+  ["#f72585", "#b5179e", "#7209b7", "#480ca8", "#3f37c9"], // cyber
+  ["#ffbe0b", "#fb5607", "#ff006e", "#8338ec", "#3a86ff"], // popart
+  ["#001219", "#005f73", "#0a9396", "#94d2bd", "#e9d8a6"], // vintage
+  ["#d8f3dc", "#b7e4c7", "#95d5b2", "#74c69d", "#52b788"], // nature
+  ["#000000", "#14213d", "#fca311", "#e5e5e5", "#ffffff"], // noir contraast
 ];
 
 export default function CoverArt({ song, seed, className = "" }) {
   const combinedSeed = `${seed}-${song.title}-${song.artist}`;
   const rng = seedrandom(combinedSeed);
-
   const randomInt = (min, max) => Math.floor(rng() * (max - min + 1)) + min;
   const randomItem = (array) => array[randomInt(0, array.length - 1)];
 
   const palette = randomItem(PALETTES);
   const bgColor = palette[0];
   const shapeColors = palette.slice(1);
-
   const numShapes = randomInt(5, 10);
   const shapes = [];
 
