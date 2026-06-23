@@ -16,6 +16,7 @@ app.get("/", (req, res) => {
   res.send({ success: 200, message: "Songpuff server is running..." });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port:${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port:${PORT}`);
+// });
+export default app;
