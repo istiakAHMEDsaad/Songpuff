@@ -12,13 +12,6 @@
   "keywords": [],
   "author": "Istiak Ahmed Saad",
   "license": "MIT",
-  "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "^11.3.0",
-      "onFail": "download"
-    }
-  },
   "type": "module",
   "dependencies": {
     "@faker-js/faker": "^10.5.0",
